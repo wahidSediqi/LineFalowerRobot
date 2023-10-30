@@ -15,14 +15,13 @@ double Ki = 0.0;  // Integral gain
 double Kd = 1.0;  // Derivative gain
 double dt = 0.01;  // Time step (adjust as needed)
 
-
 // Advanced PID parameters
 double maxMotorSpeed = 255;  // Maximum motor speed
 double maxIntegral = maxMotorSpeed / Ki;  // Maximum integral term
 double integral = 0;
 double lastError = 0;
 QTRSensors qtr;
-//
+
 const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
 void setup() {
@@ -83,9 +82,9 @@ void loop() {
     double leftMotorSpeed = maxMotorSpeed + motorSpeed;
     double rightMotorSpeed = maxMotorSpeed - motorSpeed;
 
-    analogWrite(enA, leftMotorSpeed);
+    analogWrite(enA, int(leftMotorSpeed));
 
-    analogWrite(enB, rightMotorSpeed);
+    analogWrite(enB, int(rightMotorSpeed));
 
     lastError = error;
 
