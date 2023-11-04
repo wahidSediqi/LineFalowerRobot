@@ -79,7 +79,7 @@ eller gjøre endringer i koden for å passe ditt miljø og dine krav.
 
 - [Pololu QTR Reflectance Sensors Library](https://github.com/pololu/qtr-sensors-arduino#arduino-library-for-the-pololu-qtr-reflectance-sensors)
 
-- [Arduino Offisiell Nettside](https://www.arduino.cc/)
+- [Arduino Offisiell Nettside]([https://www.arduino.cc/)](https://store.arduino.cc/products/arduino-mega-2560-rev3?queryID=undefined)
 
 - [Platform IO](https://platformio.org/)
 
