@@ -6,7 +6,6 @@ Denne README gir en oversikt over et Line Follower Robot-prosjekt som bruker en 
 driver, to motorer, en 8-kanals sensor-array og et 9V batteri for å forsyne motorstyringen med strøm. Prosjektet er
 avhengig av Pololu QTR Reflectance Sensors-biblioteket for programmering av linjefølgende oppførsel.
 
-![Line Follower Robot](img_1.png)
 
 ## Prosjekt Komponenter
 

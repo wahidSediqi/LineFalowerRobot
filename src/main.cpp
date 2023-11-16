@@ -27,23 +27,12 @@ QTRSensors qtr;
 const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
 
-void setup() {
-    // Initialiserer sensorene
-    qtr.setTypeRC();
-    qtr.setSensorPins((const uint8_t[]) {8, 9, 10, 11, 12, 13, 14, 15}, SensorCount);
-    qtr.setEmitterPin(Emitter_pin); // Valgfritt
 
-    // Initialiserer seriell kommunikasjon
-    Serial.begin(9600);
+unsigned long previousTime = 0;
+const unsigned long dtMillis = 10;
 
-    // Initialiserer motorstyringen
-    pinMode(in1, OUTPUT);
-    pinMode(in2, OUTPUT);
-    pinMode(in3, OUTPUT);
-    pinMode(in4, OUTPUT);
-    pinMode(enA, OUTPUT);
-    pinMode(enB, OUTPUT);
 
+void calibrateSensors() {
     // Kalibrerer sensorene
     for (uint16_t i = 0; i < 200; i++) {
         qtr.calibrate();
@@ -68,31 +57,58 @@ void setup() {
     delay(1000);
 }
 
+void setup() {
+    // Initialiserer sensorene
+    qtr.setTypeRC();
+    qtr.setSensorPins((const uint8_t[]) {8, 9, 10, 11, 12, 13, 14, 15}, SensorCount);
+    qtr.setEmitterPin(Emitter_pin); // Valgfritt
+
+    // Initialiserer seriell kommunikasjon
+    Serial.begin(9600);
+
+    // Initialiserer motorstyringen
+    pinMode(in1, OUTPUT);
+    pinMode(in2, OUTPUT);
+    pinMode(in3, OUTPUT);
+    pinMode(in4, OUTPUT);
+    pinMode(enA, OUTPUT);
+    pinMode(enB, OUTPUT);
+
+    calibrateSensors();
+
+}
+
 void loop() {
     // Leser sensordata
-    uint16_t position = qtr.readLineBlack(sensorValues);
 
-    // Beregner feil (juster etter sensorenes plassering)
-    double error = (sensorValues[0] - sensorValues[7]) + (sensorValues[1] - sensorValues[6]) +
-                                                         (sensorValues[2] - sensorValues[5]) + (sensorValues[3] -
-                                                                                                sensorValues[4]);//Beregner error mellom siste og første
-    integral += Ki * error * dt;//integrasjonsdel
-    integral = constrain(integral, -maxIntegral, maxIntegral);//kan brukes map istedenfor
+    unsigned long currentTime = millis();
+    if (currentTime - previousTime >= dtMillis) {
+        // Beregner feil (juster etter sensorenes plassering)
+        uint16_t position = qtr.readLineBlack(sensorValues);
+        double error = sensorValues[SensorCount / 2] -
+                       2500;//jeg har to alternativer til avvik beregning verdien til 2500 kan endres til 5000 ved behov.
+        /*double error = (sensorValues[0] - sensorValues[7]) + (sensorValues[1] - sensorValues[6]) +
+                       (sensorValues[2] - sensorValues[5]) + (sensorValues[3] -
+                                                              sensorValues[4]);//Beregner error mellom siste og første*/
+        integral += Ki * error * dt;//integrasjonsdel
+        integral = constrain(integral, -maxIntegral, maxIntegral);//kan brukes map istedenfor
 
-    // Beregner den deriverte
-    double derivative = (error - lastError) / dt;
 
-    // Beregner motorhastigheter
-    double motorSpeed = Kp * error + integral + Kd * derivative;
-    double leftMotorSpeed = maxMotorSpeed + motorSpeed;
-    double rightMotorSpeed = maxMotorSpeed - motorSpeed;
+        // Beregner den deriverte
+        double derivative = (error - lastError) / dt;
 
-    // Angir motorhastigheter
-    analogWrite(enA, int(leftMotorSpeed));
-    analogWrite(enB, int(rightMotorSpeed));
+        // Beregner motorhastigheter
+        double motorSpeed = Kp * error + integral + Kd * derivative;
+        double leftMotorSpeed = maxMotorSpeed + motorSpeed;
+        double rightMotorSpeed = maxMotorSpeed - motorSpeed;
 
-    lastError = error;
+        // Angir motorhastigheter
+        analogWrite(enA, int(leftMotorSpeed));
+        analogWrite(enB, int(rightMotorSpeed));
 
-    // Vent i tidssteg
-    delay(dt * 1000);
+        lastError = error;
+
+        // Vent i tidssteg
+        previousTime = currentTime;
+    }
 }
