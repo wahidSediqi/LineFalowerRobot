@@ -85,5 +85,5 @@ eller gjøre endringer i koden for å passe ditt miljø og dine krav.
 
 ## kontakt informasjon
 
-- Wahid Sediqi
+- Wahid Ahmad Sediqi
 - wahidas@stud.ntnu.no

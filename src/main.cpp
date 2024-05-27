@@ -80,19 +80,14 @@ void setup() {
 
 void loop() {
     // Leser sensordata
-
     unsigned long currentTime = millis();
     if (currentTime - previousTime >= dtMillis) {
         // Beregner feil (juster etter sensorenes plassering)
         uint16_t position = qtr.readLineBlack(sensorValues);
-        double error = sensorValues[SensorCount / 2] -
-                       2500;//jeg har to alternativer til avvik beregning verdien til 2500 kan endres til 5000 ved behov.
-        /*double error = (sensorValues[0] - sensorValues[7]) + (sensorValues[1] - sensorValues[6]) +
-                       (sensorValues[2] - sensorValues[5]) + (sensorValues[3] -
-                                                              sensorValues[4]);//Beregner error mellom siste og første*/
+        double error = position - 3500;
+
         integral += Ki * error * dt;//integrasjonsdel
         integral = constrain(integral, -maxIntegral, maxIntegral);//kan brukes map istedenfor
-
 
         // Beregner den deriverte
         double derivative = (error - lastError) / dt;
@@ -107,7 +102,6 @@ void loop() {
         analogWrite(enB, int(rightMotorSpeed));
 
         lastError = error;
-
         // Vent i tidssteg
         previousTime = currentTime;
     }
