@@ -1,5 +1,5 @@
 # Line Follower Robot Prosjekt konsept 3
-
+### programmet ligger i src mappe.
 ## Oversikt
 
 Denne README gir en oversikt over et Line Follower Robot-prosjekt som bruker en Arduino Mega, en H-bro L298N motor
